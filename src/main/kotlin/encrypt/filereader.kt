@@ -7,29 +7,33 @@ import javax.crypto.Cipher
 import javax.crypto.SecretKey
 
 fun encryptFile(cipher: Cipher, key: SecretKey, filename: String) {
+    println("encrypt")
     val file = File(filename)
     val dist = File("file_enc.txt")
     delIfNotNull(dist)
     dist.createNewFile()
-    file.forEachLine {
-        val sz = it.toByteArray(Charset.forName("CP1251"))
-        val out = encrypt(cipher, key, sz).toHex()
-        file.inputStream().use {
-            dist.appendText("$out\n")
+    val buff = ByteArray(cipher.blockSize)
+    file.inputStream().buffered().use {
+        while(true) {
+            val sz = it.read(buff)
+            if (sz <= 0) break
+            dist.appendBytes(encrypt(cipher, key, buff))
         }
     }
 }
 
 fun decryptFile(cipher: Cipher, key: SecretKey, filename: String) {
+    println("decrypt")
     val file = File(filename)
     val dist = File("file_dec.txt")
     delIfNotNull(dist)
     dist.createNewFile()
-    file.forEachLine {
-        val sz = it.decodeHex()
-        val out = decrypt(cipher, key, sz)
-        file.inputStream().use {
-            dist.appendText("${out.toString(Charset.forName("CP1251"))}\n")
+    val buff = ByteArray(cipher.blockSize * 2)
+    file.inputStream().buffered().use {
+        while(true) {
+            val sz = it.read(buff)
+            if (sz <= 0) break
+            dist.appendBytes(decrypt(cipher, key, buff))
         }
     }
 }

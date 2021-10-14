@@ -7,7 +7,7 @@ import javax.crypto.SecretKey
 
 fun main() {
     configure()
-    val filename = "C:\\Users\\fmato\\IdeaProjects\\kmisoib2\\src\\main\\resources\\message.txt"
+    val filename = "C:\\Users\\UmaruChan\\IdeaProjects\\kmisoib2\\src\\main\\resources\\message.txt"
     val algorithm = "DES"
     val cipher = Cipher.getInstance(algorithm, "BC")
     val key: SecretKey = keygen(algorithm)
